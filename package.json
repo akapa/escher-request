@@ -1,0 +1,28 @@
+{
+  "name": "escher-request",
+  "version": "0.0.1",
+  "description": "make and validate escher authenticated http calls",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkls/escher-request.git"
+  },
+  "keywords": [
+    "escher",
+    "request",
+    "auth"
+  ],
+  "author": "mkls",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mkls/escher-request/issues"
+  },
+  "homepage": "https://github.com/mkls/escher-request#readme",
+  "dependencies": {
+    "axios": "0.19.0",
+    "escher-auth": "3.2.0"
+  }
+}
