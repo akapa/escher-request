@@ -2,9 +2,10 @@
   "name": "escher-request",
   "version": "0.0.1",
   "description": "make and validate escher authenticated http calls",
-  "main": "index.js",
+  "main": "src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape src/*.spec.js",
+    "test:watch": "tape-watcher src/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,10 @@
     "lodash": "^4.17.11"
   },
   "devDependencies": {
-    "escher-suiteapi-js": "^14.0.1"
+    "escher-suiteapi-js": "^14.0.1",
+    "nock": "^10.0.6",
+    "tape": "^4.10.2",
+    "tape-promise": "^4.0.0",
+    "tape-watcher": "0.0.7"
   }
 }
