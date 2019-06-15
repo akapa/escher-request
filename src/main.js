@@ -5,10 +5,10 @@ const axios = require('axios');
 const { URL } = require('url');
 const _ = require('lodash');
 
-exports.get = async url => {
+exports.get = async (url, config = {}) => {
   if (isAbsoluteUrl(url)) {
-    const parsedUrl = new URL(url);
-    const integration = findIntegrationByServiceUrl(parsedUrl.origin);
+    const urlObject = new URL(url);
+    const integration = findIntegrationByServiceUrl(urlObject.origin);
     const escher = new Escher({
       accessKeyId: integration.keyId,
       apiSecret: integration.secret,
@@ -19,17 +19,25 @@ exports.get = async url => {
       dateHeaderName: 'X-Ems-Date'
     });
 
-    const requestOptionsForSign = {
-      method: 'GET',
-      url: parsedUrl.pathname + parsedUrl.search,
-      headers: [['content-type', 'application/json'], ['host', parsedUrl.host]]
-    }
+    const headers = {
+      ...config.headers,
+      'content-type': 'application/json',
+      host: urlObject.host
+    };
     const body = '';
-    const headersToSign = requestOptionsForSign.headers.map(header => header[0]);
-    const signedOptions = escher.signRequest(requestOptionsForSign, body, headersToSign);
+    const method = 'GET';
+    const relativeUrl = urlObject.pathname + urlObject.search;
 
-    const response = await axios.get(url, { headers: _.fromPairs(signedOptions.headers) });
-    return _.omit(response, 'request')
+    const headersWithAuth = calculateAuthHeaders({
+      escher,
+      method,
+      relativeUrl,
+      body,
+      headers
+    });
+
+    const response = await axios.get(url, { headers: headersWithAuth });
+    return _.omit(response, 'request');
   } else {
     console.log('todo: look up url by keyId');
   }
@@ -37,7 +45,21 @@ exports.get = async url => {
 
 const isAbsoluteUrl = url => url.startsWith('http');
 
-const findIntegrationByServiceUrl = url =>
-  JSON.parse(process.env.ESCHER_INTEGRATIONS).find(
-    integration => integration.serviceUrl === url
+const findIntegrationByServiceUrl = url => {
+  const integrations = JSON.parse(process.env.ESCHER_INTEGRATIONS);
+  const integration = integrations.find(integration => integration.serviceUrl === url);
+  if (!integration) {
+    throw new Error(`Integration for ${url} is not found in integrations`);
+  }
+  return integration;
+}
+
+const calculateAuthHeaders = ({ escher, method, relativeUrl, body, headers }) => {
+  const headersToSign = Object.keys(headers);
+  const signedRequest = escher.signRequest(
+    { method, url: relativeUrl, headers: _.toPairs(headers) },
+    body,
+    headersToSign
   );
+  return _.fromPairs(signedRequest.headers);
+};
