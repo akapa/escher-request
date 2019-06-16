@@ -1,6 +1,7 @@
 # escher-request
 
-We wanted to make it easier to work with escher requests, so this packgage provides a alternative to using packages like `escher-suiteapi-js`, `escher-auth`, `escher-keypool` and `koa-escher-auth`.
+We wanted to make it easier to work with escher requests.
+This packgage provides a alternative to using packages like `escher-suiteapi-js`, `escher-auth`, `escher-keypool` and `koa-escher-auth`.
 
 ## Setup
 
@@ -30,7 +31,7 @@ the new `secret`, `v2` keyId and `acceptOnly` as `false` which will be used for 
 
 ## API
 
-### Making request
+### Making a request
 
 Request API is intented to be as close to [axios](https://github.com/axios/axios) API as possible.
 
@@ -59,7 +60,7 @@ the correct credentials.
 
 The plan is to support most of axios's config options.
 So far `url, method, headers, timeout, maxContentLength, maxRedirects` is known to work.
-Feel free to experiment with the other ones, they might work (expect `params`, that will
+Feel free to experiment with the other ones, they might work (except `params`, that will
 not work yet for sure).
 
 #### Request method aliases
@@ -72,9 +73,10 @@ not work yet for sure).
 - escherRequest.patch(url[, data[, config]])
 
 
-### Presign URL
+### Presigning an URL
 
-Presigns an url with given expiration (in second, by deafult it is 86400 secs, aka 24 hours)
+Presigns an url with given expiration (in second, by deafult it is 86400 secs, aka 24 hours).
+Mostly useful for integrating part of a front-end into an iframe.
 
 ```js
 escherRequest.preSignUrl('http://www.example.com/etwas?a=4', { expires: 300 })
@@ -84,4 +86,33 @@ escherRequest.preSignUrl('http://www.example.com/etwas?a=4', { expires: 300 })
 escherRequest.preSignUrl('/etwas?a=4', { expires: 300, escherKeyId: 'test_test-target' })
 ```
 
-### Validate request
+### Authenticate
+
+When passed in the credentialScope of the service and parameters of a received request, returns
+whether it passes authentication check or not (correct credentialScope, keyId, secret, etc is used).
+
+```js
+const { authenticated, message } = escherRequest.authenticate(
+  'eu/test-target/ems_request',
+  {
+    method: 'POST',
+    url: '/puty',
+    headers: {
+      'content-type': 'application/json',
+      host: 'localhost:9193',
+      'x-ems-date': '20190616T183748Z',
+      'x-ems-auth': 'EMS-HMAC-SHA256 Credential=test_test-target_v1 ...'
+    },
+    body: '{"duckling":4}'
+  }
+)
+```
+
+`autheticated` is boolean, shows whether it passed authetication check or not, `message`
+contains a reason if it did not.
+
+Usually you want to wrap this method in a middlaware that handles the specifics of your
+favourite framework.
+
+See examples for ideas how this could be done: [koa](examples/koa.js),
+[koa-with-badyparser](examples/koa-with-bodyparser.js).

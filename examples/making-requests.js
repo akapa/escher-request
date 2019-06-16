@@ -6,7 +6,7 @@ process.env.ESCHER_INTEGRATIONS = `[
     "credentialScope": "eu/test-target/ems_request",
     "keyId": "test_test-target_v1",
     "secret": "secret",
-    "acceptOnly": 0
+    "acceptOnly": false
   }
 ]`;
 
@@ -37,7 +37,7 @@ console.log('preSigned', preSigned);
 
 function logError(error) {
   if (error.response) {
-    console.log(error.response.status, error.response.statusText);
+    console.log(error.response.status, error.response.statusText, error.response.data);
   } else {
     console.log(error);
   }
