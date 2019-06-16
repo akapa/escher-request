@@ -35,9 +35,40 @@ test('should sign the request correctly when using a relative url and escherKeyI
     .get('/hello')
     .reply(200, { yolo: true });
 
-  const response = await escherRequest.get('/hello', { escherKeyId: 'test_test-target_v1' });
+  const response = await escherRequest.get('/hello', { escherKeyId: 'test_test-target' });
 
   t.deepEqual(response.data, { yolo: true });
+}));
+
+test('should find the integration where acceptOnly is false', a(async t => {
+  process.env.ESCHER_INTEGRATIONS = `[
+    {
+      "serviceUrl": "http://www.example.com",
+      "credentialScope": "eu/test-target/ems_request",
+      "keyId": "test_test-target_v1",
+      "secret": "secret",
+      "acceptOnly": true
+    },
+    {
+      "serviceUrl": "http://www.example.com",
+      "credentialScope": "eu/test-target/ems_request",
+      "keyId": "test_test-target_v2",
+      "secret": "secret",
+      "acceptOnly": false
+    }
+  ]`;
+
+  nock('http://www.example.com', {
+      reqheaders: {
+        'x-ems-auth': /Credential=test_test-target_v2\//
+      }
+    })
+    .get('/hello')
+    .reply(200, 'OK');
+
+  const response = await escherRequest.get('/hello', { escherKeyId: 'test_test-target' });
+
+  t.deepEqual(response.data, 'OK');
 }));
 
 test('should sign extra headers set through options', a(async t => {

@@ -32,12 +32,45 @@ the new `secret`, `v2` keyId and `acceptOnly` as `false` which will be used for 
 
 ### Making request
 
-##### escherRequest.requst(config)
+Request API is intented to be as close to [axios](https://github.com/axios/axios) API as possible.
 
-The plan is to have the same interface for config object as [axios](https://github.com/axios/axios).
-`url, method, headers, timeout, maxContentLength, maxRedirects` options should work,
-feel free to experiment with the other ones, they might work (expect `params`, that will
+```js
+// Send a POST request
+escherRequest.request({
+  method: 'post',
+  url: '/user/12345',
+  data: {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  }
+});
+```
+
+There is an extra `escherKeyId` option, which let you make calls with relative urls:
+
+```js
+escherRequest.get('/hello', { escherKeyId: 'test_test-target' })
+```
+
+This allows you to write environment independent code more easily.
+You only have to change the value of the `ESCHER_INTEGRATIONS` environment variable
+between environments, and your requests will go to the correct destination signed with
+the correct credentials.
+
+The plan is to support most of axios's config options.
+So far `url, method, headers, timeout, maxContentLength, maxRedirects` is known to work.
+Feel free to experiment with the other ones, they might work (expect `params`, that will
 not work yet for sure).
+
+#### Request method aliases
+- escherRequest.get(url[, config])
+- escherRequest.delete(url[, config])
+- escherRequest.head(url[, config])
+- escherRequest.options(url[, config])
+- escherRequest.post(url[, data[, config]])
+- escherRequest.put(url[, data[, config]])
+- escherRequest.patch(url[, data[, config]])
+
 
 ### Presign URL
 

@@ -5,19 +5,56 @@ const axios = require('axios');
 const { URL } = require('url');
 const _ = require('lodash');
 
-exports.request = async config => {};
+exports.request = async config => {
+  config = {
+    method: 'get',
+    url: '',
+    timeout: 15000,
+    ...config
+  };
 
-exports.get = async (url, config = {}) => {
-  let integration;
-  let urlObject;
-  if (isAbsoluteUrl(url)) {
-    urlObject = new URL(url);
-    integration = findIntegration('serviceUrl', urlObject.origin);
+  const { url, integration } = getUrlAndIntegration(config.url, config.escherKeyId);
+
+  const headers = {
+    ...config.headers,
+    'content-type': 'application/json',
+    host: url.host
+  };
+  const data = config.data ? JSON.stringify(config.data) : undefined;
+  const method = config.method;
+
+  const headersWithAuth = addAuthHeaders({ integration, method, url, data, headers });
+
+  const response = await axios.request({
+    ...config,
+    method,
+    url: url.href,
+    data,
+    headers: headersWithAuth
+  });
+  return _.omit(response, 'request');
+};
+
+['delete', 'get', 'head', 'options'].forEach(method => {
+  exports[method] = async (url, config = {}) => exports.request({ ...config, method, url });
+});
+['post', 'put', 'patch'].forEach(method => {
+  exports[method] = async (url, data, config = {}) => exports.request({ ...config, method, url, data });
+});
+
+const getUrlAndIntegration = (urlParam, escherKeyId) => {
+  if (urlParam.startsWith('http')) {
+    const url = new URL(urlParam);
+    const integration = findIntegrationByUrl(url.origin);
+    return { url, integration };
   } else {
-    integration = findIntegration('keyId', config.escherKeyId);
-    urlObject = new URL(integration.serviceUrl + url);
+    const integration = findIntegrationByEscherKey(escherKeyId);
+    const url = new URL(integration.serviceUrl + urlParam);
+    return { url, integration };
   }
+};
 
+const addAuthHeaders = ({ integration, method, url, data, headers }) => {
   const escher = new Escher({
     accessKeyId: integration.keyId,
     apiSecret: integration.secret,
@@ -28,40 +65,27 @@ exports.get = async (url, config = {}) => {
     dateHeaderName: 'X-Ems-Date'
   });
 
-  const headers = {
-    ...config.headers,
-    'content-type': 'application/json',
-    host: urlObject.host
-  };
-  const body = '';
-  const method = 'GET';
-  const relativeUrl = urlObject.pathname + urlObject.search;
-
-  const headersWithAuth = calculateAuthHeaders({
-    escher,
-    method,
-    relativeUrl,
-    body,
-    headers
-  });
-
-  const response = await axios.get(urlObject.href, { ...config, headers: headersWithAuth });
-  return _.omit(response, 'request');
-};
-
-const isAbsoluteUrl = url => url.startsWith('http');
-
-const findIntegration = (property, value) => {
-  const integrations = JSON.parse(process.env.ESCHER_INTEGRATIONS);
-  return integrations.find(integration => integration[property] === value)
-};
-
-const calculateAuthHeaders = ({ escher, method, relativeUrl, body, headers }) => {
   const headersToSign = Object.keys(headers);
   const signedRequest = escher.signRequest(
-    { method, url: relativeUrl, headers: _.toPairs(headers) },
-    body,
+    {
+      method: method.toUpperCase(),
+      url: url.pathname + url.search,
+      headers: _.toPairs(headers)
+    },
+    data || '',
     headersToSign
   );
   return _.fromPairs(signedRequest.headers);
+}
+
+const findIntegrationByUrl = urlOrigin => {
+  const integrations = JSON.parse(process.env.ESCHER_INTEGRATIONS);
+  return integrations.find(integration => integration.serviceUrl === urlOrigin)
 };
+
+const findIntegrationByEscherKey = escherKeyId => {
+  const integrations = JSON.parse(process.env.ESCHER_INTEGRATIONS);
+  return integrations
+    .filter(integration => !integration.acceptOnly)
+    .find(integration => integration.keyId.replace(/_v\d+/, '') === escherKeyId);
+}
