@@ -43,7 +43,7 @@ escherRequest.request({
     firstName: 'Fred',
     lastName: 'Flintstone'
   }
-});
+})
 ```
 
 There is an extra `escherKeyId` option, which let you make calls with relative urls:
@@ -73,5 +73,15 @@ not work yet for sure).
 
 
 ### Presign URL
+
+Presigns an url with given expiration (in second, by deafult it is 86400 secs, aka 24 hours)
+
+```js
+escherRequest.preSignUrl('http://www.example.com/etwas?a=4', { expires: 300 })
+```
+
+```js
+escherRequest.preSignUrl('/etwas?a=4', { expires: 300, escherKeyId: 'test_test-target' })
+```
 
 ### Validate request

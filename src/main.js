@@ -42,6 +42,12 @@ exports.request = async config => {
   exports[method] = async (url, data, config = {}) => exports.request({ ...config, method, url, data });
 });
 
+exports.preSignUrl = (urlParam, { expires = 86400, escherKeyId = null }) => {
+  const { url, integration } = getUrlAndIntegration(urlParam, escherKeyId);
+  const escher = getEscherForIntegration(integration);
+  return escher.preSignUrl(url.href, expires);
+};
+
 const getUrlAndIntegration = (urlParam, escherKeyId) => {
   if (urlParam.startsWith('http')) {
     const url = new URL(urlParam);
@@ -55,15 +61,7 @@ const getUrlAndIntegration = (urlParam, escherKeyId) => {
 };
 
 const addAuthHeaders = ({ integration, method, url, data, headers }) => {
-  const escher = new Escher({
-    accessKeyId: integration.keyId,
-    apiSecret: integration.secret,
-    credentialScope: integration.credentialScope,
-    algoPrefix: 'EMS',
-    vendorKey: 'EMS',
-    authHeaderName: 'X-Ems-Auth',
-    dateHeaderName: 'X-Ems-Date'
-  });
+  const escher = getEscherForIntegration(integration);
 
   const headersToSign = Object.keys(headers);
   const signedRequest = escher.signRequest(
@@ -76,7 +74,17 @@ const addAuthHeaders = ({ integration, method, url, data, headers }) => {
     headersToSign
   );
   return _.fromPairs(signedRequest.headers);
-}
+};
+
+const getEscherForIntegration = integration => new Escher({
+  accessKeyId: integration.keyId,
+  apiSecret: integration.secret,
+  credentialScope: integration.credentialScope,
+  algoPrefix: 'EMS',
+  vendorKey: 'EMS',
+  authHeaderName: 'X-Ems-Auth',
+  dateHeaderName: 'X-Ems-Date'
+});
 
 const findIntegrationByUrl = urlOrigin => {
   const integrations = JSON.parse(process.env.ESCHER_INTEGRATIONS);
@@ -88,4 +96,4 @@ const findIntegrationByEscherKey = escherKeyId => {
   return integrations
     .filter(integration => !integration.acceptOnly)
     .find(integration => integration.keyId.replace(/_v\d+/, '') === escherKeyId);
-}
+};

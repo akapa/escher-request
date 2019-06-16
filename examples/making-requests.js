@@ -27,6 +27,14 @@ escherRequest.post('/puty', { valami: 4 }, { escherKeyId: 'test_test-target' })
   .then(console.log)
   .catch(logError);
 
+// // presigning url
+var preSigned = escherRequest.preSignUrl('http://localhost:9193/hello?a=4', { expires: 300 });
+console.log('preSigned', preSigned);
+
+// presign relative url
+var preSigned = escherRequest.preSignUrl('/hello?a=4', { expires: 300, escherKeyId: 'test_test-target' });
+console.log('preSigned', preSigned);
+
 function logError(error) {
   if (error.response) {
     console.log(error.response.status, error.response.statusText);
