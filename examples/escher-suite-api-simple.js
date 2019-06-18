@@ -13,3 +13,4 @@ const suiteRequest = SuiteRequest.create('test_test-target_v1', 'secret', option
 suiteRequest.get('/hello?a=2')
   .then(console.log)
   .catch(console.log);
+

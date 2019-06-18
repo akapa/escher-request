@@ -28,6 +28,7 @@
     "lodash": "4.17.11"
   },
   "devDependencies": {
+    "escher-keypool": "^2.0.2",
     "escher-suiteapi-js": "^14.0.1",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",

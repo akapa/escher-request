@@ -79,11 +79,17 @@ Presigns an url with given expiration (in second, by deafult it is 86400 secs, a
 Mostly useful for integrating part of a front-end into an iframe.
 
 ```js
-escherRequest.preSignUrl('http://www.example.com/etwas?a=4', { expires: 300 })
+escherRequest.preSignUrl(
+  'http://www.example.com/etwas?a=4',
+  { expires: 300 }
+)
 ```
 
 ```js
-escherRequest.preSignUrl('/etwas?a=4', { expires: 300, escherKeyId: 'test_test-target' })
+escherRequest.preSignUrl(
+  '/etwas?a=4',
+  { expires: 300, escherKeyId: 'test_test-target' }
+)
 ```
 
 ### Authenticate

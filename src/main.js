@@ -53,7 +53,7 @@ exports.patch = async (url, data, config = {}) => exports.request({ ...config, m
 exports.preSignUrl = (urlParam, { expires = 86400, escherKeyId = null }) => {
   const { url, integration } = getUrlAndIntegration(urlParam, escherKeyId);
   const escher = getEscherForIntegration(integration);
-  return escher.preSignUrl(url.href, expires);
+  return escher.preSignUrl(url.href, expires) + url.hash;
 };
 
 exports.authenticate = (credentialScope, { method, url, headers, body }) => {
