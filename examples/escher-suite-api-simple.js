@@ -2,7 +2,6 @@
 
 const SuiteRequest = require('escher-suiteapi-js');
 
-// simple use case
 const options = new SuiteRequest.Options('localhost', {
   credentialScope: 'eu/test-target/ems_request',
   secure: false,

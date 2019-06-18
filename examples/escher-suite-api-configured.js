@@ -4,14 +4,14 @@ const SuiteRequest = require('escher-suiteapi-js');
 const KeyPool = require('escher-keypool');
 const { URL } = require('url');
 
-process.env.ESCHER_KEY_POOL = `[
-  { "keyId": "test_test-target_v1", "secret": "secret", "acceptOnly": 0 }
-]`
 process.env.INTEGRATION_TEST_TARGET = `{
   "url": "http://localhost:9193",
   "keyId": "test_test-target",
   "credentialScope": "eu/test-target/ems_request"
 }`
+process.env.ESCHER_KEY_POOL = `[
+  { "keyId": "test_test-target_v1", "secret": "secret", "acceptOnly": 0 }
+]`
 
 const integration = JSON.parse(process.env.INTEGRATION_TEST_TARGET);
 
