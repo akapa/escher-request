@@ -30,6 +30,7 @@
   "devDependencies": {
     "escher-keypool": "^2.0.2",
     "escher-suiteapi-js": "^14.0.1",
+    "express": "^4.17.1",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
