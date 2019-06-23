@@ -13,14 +13,17 @@ const emsEscherConstants = {
 };
 
 exports.request = async config => {
-  config = {
-    method: 'get',
-    url: '',
-    timeout: 15000,
-    ...config
-  };
+  config = { timeout: 15000, ...config };
 
-  const { url, integration } = getUrlAndIntegration(config.url, config.escherKeyId);
+  const { absouleUrl, integration } = getAbsolutUrlAndIntegration(
+    config.url,
+    config.escherKeyId
+  );
+  const urlWithParams = axios.getUri({
+    url: absouleUrl,
+    ..._.pick(config, ['params', 'paramsSerializer'])
+  });
+  const url = new URL(urlWithParams);
 
   const headers = {
     ...config.headers,
@@ -28,12 +31,13 @@ exports.request = async config => {
     host: url.host
   };
   const data = config.data ? JSON.stringify(config.data) : undefined;
+  const relativeUrl = url.pathname + url.search;
   const method = config.method;
 
-  const headersWithAuth = addAuthHeaders({ integration, method, url, data, headers });
+  const headersWithAuth = addAuthHeaders({ integration, method, relativeUrl, data, headers });
 
   const response = await axios.request({
-    ...config,
+    ..._.omit(config, ['params', 'paramsSerializer']),
     method,
     url: url.href,
     data,
@@ -51,9 +55,9 @@ exports.put = async (url, data, config = {}) => exports.request({ ...config, met
 exports.patch = async (url, data, config = {}) => exports.request({ ...config, method: 'patch', url, data });
 
 exports.preSignUrl = (urlParam, { expires = 86400, escherKeyId = null }) => {
-  const { url, integration } = getUrlAndIntegration(urlParam, escherKeyId);
+  const { absouleUrl, integration } = getAbsolutUrlAndIntegration(urlParam, escherKeyId);
   const escher = getEscherForIntegration(integration);
-  return escher.preSignUrl(url.href, expires) + url.hash;
+  return escher.preSignUrl(absouleUrl, expires);
 };
 
 exports.authenticate = (credentialScope, { method, url, headers, body }) => {
@@ -67,26 +71,25 @@ exports.authenticate = (credentialScope, { method, url, headers, body }) => {
   }
 };
 
-const getUrlAndIntegration = (urlParam, escherKeyId) => {
+const getAbsolutUrlAndIntegration = (urlParam, escherKeyId) => {
   if (urlParam.startsWith('http')) {
     const url = new URL(urlParam);
     const integration = findIntegrationByUrl(url.origin);
-    return { url, integration };
+    return { absouleUrl: url.href, integration };
   } else {
     const integration = findIntegrationByEscherKey(escherKeyId);
-    const url = new URL(integration.serviceUrl + urlParam);
-    return { url, integration };
+    return { absouleUrl: integration.serviceUrl + urlParam, integration };
   }
 };
 
-const addAuthHeaders = ({ integration, method, url, data, headers }) => {
+const addAuthHeaders = ({ integration, method, relativeUrl, data, headers }) => {
   const escher = getEscherForIntegration(integration);
 
   const headersToSign = Object.keys(headers);
   const signedRequest = escher.signRequest(
     {
       method: method.toUpperCase(),
-      url: url.pathname + url.search,
+      url: relativeUrl,
       headers: _.toPairs(headers)
     },
     data || '',
@@ -95,26 +98,42 @@ const addAuthHeaders = ({ integration, method, url, data, headers }) => {
   return _.fromPairs(signedRequest.headers);
 };
 
-const getEscherForIntegration = integration => new Escher({
-  accessKeyId: integration.keyId,
-  apiSecret: integration.secret,
-  credentialScope: integration.credentialScope,
-  ...emsEscherConstants
-});
+const getEscherForIntegration = integration =>
+  new Escher({
+    accessKeyId: integration.keyId,
+    apiSecret: integration.secret,
+    credentialScope: integration.credentialScope,
+    ...emsEscherConstants
+  });
 
 const findIntegrationByUrl = urlOrigin => {
-  const integrations = JSON.parse(process.env.ESCHER_INTEGRATIONS);
-  return integrations.find(integration => integration.serviceUrl === urlOrigin)
+  const integration = getIntegrations().find(
+    integration => integration.serviceUrl === urlOrigin
+  );
+  if (!integration) {
+    throw new Error(`Escher integration not found for ${urlOrigin} serviceUrl.`);
+  }
+  return integration;
 };
 
 const findIntegrationByEscherKey = escherKeyId => {
-  const integrations = JSON.parse(process.env.ESCHER_INTEGRATIONS);
-  return integrations
+  const integration = getIntegrations()
     .filter(integration => !integration.acceptOnly)
     .find(integration => integration.keyId.replace(/_v\d+/, '') === escherKeyId);
+  if (!integration) {
+    throw new Error(`Escher integration not found for ${escherKeyId} escherKeyId.`);
+  }
+  return integration;
 };
 
 const keyDbForAuthenticate = escherKeyId => {
-  const integrations = JSON.parse(process.env.ESCHER_INTEGRATIONS);
-  return integrations.find(integration => integration.keyId === escherKeyId).secret;
-}
+  return getIntegrations().find(integration => integration.keyId === escherKeyId).secret;
+};
+
+const getIntegrations = () => {
+  try {
+    return JSON.parse(process.env.ESCHER_INTEGRATIONS);
+  } catch (error) {
+    throw new Error('content of the ESCHER_INTEGRATIONS env variable is not valid JSON.');
+  }
+};

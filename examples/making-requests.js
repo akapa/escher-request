@@ -18,7 +18,7 @@ escherRequest.get('http://localhost:9193/hello?a=1&b=2')
   .catch(logError);
 
 // request with relative url and escherKeyId option
-escherRequest.get('/hello', { escherKeyId: 'test_test-target' })
+escherRequest.get('/hello?t=1#new', { escherKeyId: 'test_test-target', params: { a: 3 } })
   .then(console.log)
   .catch(logError);
 
@@ -27,7 +27,7 @@ escherRequest.post('/puty', { valami: 4 }, { escherKeyId: 'test_test-target' })
   .then(console.log)
   .catch(logError);
 
-// // presigning url
+// presigning url
 var preSigned = escherRequest.preSignUrl(
   'http://localhost:9193/hello?a=4',
   { expires: 300 }
@@ -36,7 +36,7 @@ console.log('preSigned', preSigned);
 
 // presign relative url
 var preSigned = escherRequest.preSignUrl(
-  '/hello?a=4#yolo',
+  '/hello?a=4',
   { expires: 300, escherKeyId: 'test_test-target' }
 );
 console.log('preSigned', preSigned);

@@ -40,7 +40,7 @@ test('should sign the request correctly when using a relative url and escherKeyI
   t.deepEqual(response.data, { yolo: true });
 }));
 
-test('should find the integration where acceptOnly is false', a(async t => {
+test('should find the integration where acceptOnly is false/not set', a(async t => {
   process.env.ESCHER_INTEGRATIONS = `[
     {
       "serviceUrl": "http://www.example.com",
@@ -53,8 +53,7 @@ test('should find the integration where acceptOnly is false', a(async t => {
       "serviceUrl": "http://www.example.com",
       "credentialScope": "eu/test-target/ems_request",
       "keyId": "test_test-target_v2",
-      "secret": "secret",
-      "acceptOnly": false
+      "secret": "secret"
     }
   ]`;
 

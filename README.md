@@ -28,6 +28,7 @@ For each service you want to communicate with include an object in the array wit
 - `acceptOnly` makes it easier to rotate your keys. When it's `true` it will only
 be used to validate incoming requests, and you can have a second entry for this service with
 the new `secret`, `v2` keyId and `acceptOnly` as `false` which will be used for outgoing ones.
+(optional parameter, default is `false`)
 
 ## API
 
