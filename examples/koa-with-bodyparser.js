@@ -5,8 +5,7 @@ process.env.ESCHER_INTEGRATIONS = `[
     "serviceUrl": "http://somewhere.com",
     "credentialScope": "eu/test/ems_request",
     "keyId": "test_test-target_v1",
-    "secret": "secret",
-    "acceptOnly": false
+    "secret": "secret"
   }
 ]`;
 

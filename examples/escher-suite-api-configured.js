@@ -2,29 +2,25 @@
 
 const SuiteRequest = require('escher-suiteapi-js');
 const KeyPool = require('escher-keypool');
-const { URL } = require('url');
 
-process.env.INTEGRATION_TEST_TARGET = `{
-  "url": "http://localhost:9193",
-  "keyId": "test_test-target",
-  "credentialScope": "eu/test-target/ems_request"
-}`
+process.env.TEST_TARGET_URL='localhost'
+process.env.TEST_TARGET_PORT='9193'
+process.env.TEST_TARGET_SECURE='false'
+process.env.TEST_TARGET_ESCHER_KEY_ID='test_test-target'
+process.env.TEST_TARGET_CREDENTIAL_SCOPE='eu/test-target/ems_request'
 process.env.ESCHER_KEY_POOL = `[
   { "keyId": "test_test-target_v1", "secret": "secret", "acceptOnly": 0 }
 ]`
 
-const integration = JSON.parse(process.env.INTEGRATION_TEST_TARGET);
-
-const { protocol, hostname, port } = new URL(integration.url);
-const options = new SuiteRequest.Options(hostname, {
-  credentialScope: integration.credentialScope,
-  secure: protocol !== 'http:',
-  port
+const options = new SuiteRequest.Options(process.env.TEST_TARGET_URL, {
+  credentialScope: process.env.TEST_TARGET_CREDENTIAL_SCOPE,
+  secure: process.env.TEST_TARGET_SECURE === 'true',
+  port: parseInt(process.env.TEST_TARGET_PORT)
 })
 
 const { secret, keyId } = KeyPool
   .create(process.env.ESCHER_KEY_POOL)
-  .getActiveKey(integration.keyId)
+  .getActiveKey(process.env.TEST_TARGET_ESCHER_KEY_ID)
 
 const suiteRequest =  SuiteRequest.create(keyId, secret, options)
 

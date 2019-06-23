@@ -59,10 +59,9 @@ You only have to change the value of the `ESCHER_INTEGRATIONS` environment varia
 between environments, and your requests will go to the correct destination signed with
 the correct credentials.
 
-The plan is to support most of axios's config options.
-So far `url, method, headers, timeout, maxContentLength, maxRedirects` is known to work.
-Feel free to experiment with the other ones, they might work (except `params`, that will
-not work yet for sure).
+The plan is to support most of axios's config options. `url`, `method`, `headers`, `data`,
+`params` and `paramsSerializer` options are pre-processed, since they have direct impect
+on the escher signature to be generted. All other options are passed down to axios unchanged.
 
 #### Request method aliases
 - escherRequest.get(url[, config])
@@ -122,4 +121,11 @@ Usually you want to wrap this method in a middlaware that handles the specifics 
 favourite framework.
 
 See examples for ideas how this could be done: [koa](examples/koa.js),
-[koa-with-badyparser](examples/koa-with-bodyparser.js).
+[koa-with-badyparser](examples/koa-with-bodyparser.js), [express](examples/express.js), [express-with-bodyparser](examples/express-with-bodyparser)
+
+## Contributing
+
+This package is currently mainted by @mkls. Feel free to reach out with problems, suggestions
+or anything through github issues.
+
+Pull requests are always welcome, just follow our ordinal commit message convention.
