@@ -6,7 +6,6 @@ const _ = require('lodash');
 const escherRequest = require('./main');
 const { a } = require('./test-helpers');
 
-// making requests
 test('should find escher credentials based on url and set escher headers', a(async t => {
   setUpExampleEscherIntegration();
 

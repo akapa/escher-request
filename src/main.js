@@ -78,6 +78,9 @@ const getAbsolutUrlAndIntegration = (urlParam, escherKeyId) => {
     return { absouleUrl: url.href, integration };
   } else {
     const integration = findIntegrationByEscherKey(escherKeyId);
+    if (!integration.serviceUrl) {
+      throw new Error(`No serviceUrl found for integration with ${escherKeyId} keyId.`)
+    }
     return { absouleUrl: integration.serviceUrl + urlParam, integration };
   }
 };
@@ -132,8 +135,8 @@ const keyDbForAuthenticate = escherKeyId => {
 
 const getIntegrations = () => {
   try {
-    return JSON.parse(process.env.ESCHER_INTEGRATIONS);
+    return JSON.parse(process.env.ESCHER_INTEGRATIONS || process.env.ESCHER_KEY_POOL || process.env.SUITE_ESCHER_KEY_POOL);
   } catch (error) {
-    throw new Error('content of the ESCHER_INTEGRATIONS env variable is not valid JSON.');
+    throw new Error('No escher configuration env variable found or configuration is not a valid JSON');
   }
 };

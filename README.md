@@ -1,40 +1,45 @@
 # escher-request
 
 We wanted to make it easier to work with escher requests.
-This packgage provides a alternative to using packages like `escher-suiteapi-js`, `escher-auth`, `escher-keypool` and `koa-escher-auth`.
+This package provides a alternative to using packages like `escher-suiteapi-js`, `escher-auth`, `escher-keypool` and `koa-escher-auth`.
 
 ## Setup
 
-For `escher-request` to work, you have to have a sing `ESCHER_INTEGRATIONS` environemnt
-variable set with all your escher related secrets and stuff.
+For `escher-request` to work, you should set `ESCHER_INTEGRATIONS` environment
+variable set with all your escher related config.
+
+For compatibility reasons `ESCHER_KEY_POOL` and `SUITE_ESCHER_KEY_POOL` variables are also supported
+for storing config.
 
 ```js
 process.env.ESCHER_INTEGRATIONS = `[
   {
-    "serviceUrl": "http://www.example.com:8080",
-    "credentialScope": "eu/test-target/ems_request",
+    "keyId": "test_test-sender_v1",
+    "secret": "code"
+  }
+  {
     "keyId": "test_test-target_v1",
     "secret": "secret",
-    "acceptOnly": false
+    "serviceUrl": "http://www.example.com:8080",
+    "credentialScope": "eu/test-target/ems_request"
   }
 ]`;
 ```
 
 For each service you want to communicate with include an object in the array with these params:
-- `serviceUrl` is the base url of the service
-- `credentialScope` will be set in auth header when sending a request towards the service
-- `keyId` will be also sent, the receiving party will use this to look up the secret
-- `secret` this will be used to generate and validate the signature
-- `acceptOnly` makes it easier to rotate your keys. When it's `true` it will only
+- `keyId` sent with outgoing request, used during authentication to look up the matching secret
+- `secret` used to generate and validate the signature
+- `serviceUrl` _(optional)_ base url of the service (needed for outgoing requests)
+- `credentialScope` _(optional)_ will be set in auth header when sending a request towards the service (needed for outgoing requests)
+- `acceptOnly` _(optional, default `false`)_ makes it easier to rotate your keys. When it's `true` it will only
 be used to validate incoming requests, and you can have a second entry for this service with
-the new `secret`, `v2` keyId and `acceptOnly` as `false` which will be used for outgoing ones.
-(optional parameter, default is `false`)
+the new `secret`, version two (`..._v2`) key id and `acceptOnly` as `false` which will be used for outgoing ones.
 
 ## API
 
 ### Making a request
 
-Request API is intented to be as close to [axios](https://github.com/axios/axios) API as possible.
+Request API is intended to be as close to [axios](https://github.com/axios/axios) API as possible.
 
 ```js
 // Send a POST request
@@ -54,14 +59,16 @@ There is an extra `escherKeyId` option, which let you make calls with relative u
 escherRequest.get('/hello', { escherKeyId: 'test_test-target' })
 ```
 
+Omit version information from the end of the key for this config (eg: `key` instead of `key_v1`))
+
 This allows you to write environment independent code more easily.
 You only have to change the value of the `ESCHER_INTEGRATIONS` environment variable
 between environments, and your requests will go to the correct destination signed with
 the correct credentials.
 
 The plan is to support most of axios's config options. `url`, `method`, `headers`, `data`,
-`params` and `paramsSerializer` options are pre-processed, since they have direct impect
-on the escher signature to be generted. All other options are passed down to axios unchanged.
+`params` and `paramsSerializer` options are pre-processed, since they have direct impact
+on the escher signature to be generated. All other options are passed down to axios unchanged.
 
 #### Request method aliases
 - escherRequest.get(url[, config])
@@ -73,10 +80,10 @@ on the escher signature to be generted. All other options are passed down to axi
 - escherRequest.patch(url[, data[, config]])
 
 
-### Presigning an URL
+### Pre-signing an URL
 
-Presigns an url with given expiration (in second, by deafult it is 86400 secs, aka 24 hours).
-Mostly useful for integrating part of a front-end into an iframe.
+Pre-signs an url with given expiration (in second, by default it is 86400 secs, aka 24 hours).
+Mostly useful for ui handshake requests or integrating an iframe into a front-end.
 
 ```js
 escherRequest.preSignUrl(
@@ -95,7 +102,7 @@ escherRequest.preSignUrl(
 ### Authenticate
 
 When passed in the credentialScope of the service and parameters of a received request, returns
-whether it passes authentication check or not (correct credentialScope, keyId, secret, etc is used).
+whether it passes authentication or not (correct `credentialScope`, `keyId`, `secret`, etc is used).
 
 ```js
 const { authenticated, message } = escherRequest.authenticate(
@@ -114,18 +121,18 @@ const { authenticated, message } = escherRequest.authenticate(
 )
 ```
 
-`autheticated` is boolean, shows whether it passed authetication check or not, `message`
+`autheticated` is boolean, shows whether it passed authentication or not, `message`
 contains a reason if it did not.
 
 Usually you want to wrap this method in a middlaware that handles the specifics of your
-favourite framework.
+favorite framework.
 
 See examples for ideas how this could be done: [koa](examples/koa.js),
 [koa-with-badyparser](examples/koa-with-bodyparser.js), [express](examples/express.js), [express-with-bodyparser](examples/express-with-bodyparser)
 
 ## Contributing
 
-This package is currently mainted by @mkls. Feel free to reach out with problems, suggestions
+This package is currently maintained by @mkls. Feel free to reach out with problems, suggestions
 or anything through github issues.
 
 Pull requests are always welcome, just follow our ordinal commit message convention.
