@@ -39,6 +39,26 @@ test('should sign the request correctly when using a relative url and escherKeyI
   t.deepEqual(response.data, { yolo: true });
 }));
 
+test('should sign the request when escher params are passed in explicitly', a(async t => {
+  process.env.ESCHER_INTEGRATIONS = '';
+  nock('http://www.tap.com', {
+      reqheaders: {
+        'x-ems-date': /\d{8}T\d{6}Z/,
+        'x-ems-auth': /EMS-HMAC-SHA256 Credential=test_test-target_v1\/\d{8}\/eu\/test-target\/ems_request, SignedHeaders=content-type;host;x-ems-date, Signature=/
+      }
+    })
+    .get('/hello')
+    .reply(200, { yolo: 3 });
+
+  const response = await escherRequest.get('http://www.tap.com/hello', {
+    escherKeyId: 'test_test-target_v1',
+    escherCredentialScope: 'eu/test-target/ems_request',
+    escherSecret: 'secret'
+  });
+
+  t.deepEqual(response.data, { yolo: 3 });
+}));
+
 test('should find the integration where acceptOnly is false/not set', a(async t => {
   process.env.ESCHER_INTEGRATIONS = `[
     {

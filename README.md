@@ -66,6 +66,19 @@ You only have to change the value of the `ESCHER_INTEGRATIONS` environment varia
 between environments, and your requests will go to the correct destination signed with
 the correct credentials.
 
+If you would like to use the package without `ESCHER_INTEGRATIONS` environment variable, you can
+explicitly pass in `escherCredentialScope` and `escherSecret` in config, which will be used
+to generate the authentication headers. For this special use case version information have to
+be included in the key, and only absolue url can be used.
+
+```js
+escherRequest.get('http://localhost:45345/hello', {
+  escherKeyId: 'test_test-target_v1',
+  escherCredentialScope: 'eu/hap/ems_request',
+  escherSecret: 'secret'
+});
+```
+
 The plan is to support most of axios's config options. `url`, `method`, `headers`, `data`,
 `params` and `paramsSerializer` options are pre-processed, since they have direct impact
 on the escher signature to be generated. All other options are passed down to axios unchanged.

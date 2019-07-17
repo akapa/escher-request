@@ -15,10 +15,7 @@ const emsEscherConstants = {
 exports.request = async config => {
   config = { timeout: 15000, ...config };
 
-  const { absouleUrl, integration } = getAbsolutUrlAndIntegration(
-    config.url,
-    config.escherKeyId
-  );
+  const { absouleUrl, integration } = getAbsolutUrlAndIntegration(config);
   const urlWithParams = axios.getUri({
     url: absouleUrl,
     ..._.pick(config, ['params', 'paramsSerializer'])
@@ -54,8 +51,8 @@ exports.post = async (url, data, config = {}) => exports.request({ ...config, me
 exports.put = async (url, data, config = {}) => exports.request({ ...config, method: 'put', url, data });
 exports.patch = async (url, data, config = {}) => exports.request({ ...config, method: 'patch', url, data });
 
-exports.preSignUrl = (urlParam, { expires = 86400, escherKeyId = null }) => {
-  const { absouleUrl, integration } = getAbsolutUrlAndIntegration(urlParam, escherKeyId);
+exports.preSignUrl = (url, { expires = 86400, escherKeyId = null }) => {
+  const { absouleUrl, integration } = getAbsolutUrlAndIntegration({ url, escherKeyId });
   const escher = getEscherForIntegration(integration);
   return escher.preSignUrl(absouleUrl, expires);
 };
@@ -71,17 +68,26 @@ exports.authenticate = (credentialScope, { method, url, headers, body }) => {
   }
 };
 
-const getAbsolutUrlAndIntegration = (urlParam, escherKeyId) => {
-  if (urlParam.startsWith('http')) {
-    const url = new URL(urlParam);
+const getAbsolutUrlAndIntegration = config => {
+  if (config.escherCredentialScope && config.escherSecret) {
+    return {
+      absouleUrl: config.url,
+      integration: {
+        keyId: config.escherKeyId,
+        secret: config.escherSecret,
+        credentialScope: config.escherCredentialScope
+      }
+    };
+  } else if (config.url.startsWith('http')) {
+    const url = new URL(config.url);
     const integration = findIntegrationByUrl(url.origin);
     return { absouleUrl: url.href, integration };
   } else {
-    const integration = findIntegrationByEscherKey(escherKeyId);
+    const integration = findIntegrationByEscherKey(config.escherKeyId);
     if (!integration.serviceUrl) {
-      throw new Error(`No serviceUrl found for integration with ${escherKeyId} keyId.`)
+      throw new Error(`No serviceUrl found for integration with ${config.escherKeyId} keyId.`)
     }
-    return { absouleUrl: integration.serviceUrl + urlParam, integration };
+    return { absouleUrl: integration.serviceUrl + config.url, integration };
   }
 };
 
