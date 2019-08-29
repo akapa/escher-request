@@ -45,7 +45,7 @@ Request API is intended to be as close to [axios](https://github.com/axios/axios
 // Send a POST request
 escherRequest.request({
   method: 'post',
-  url: '/user/12345',
+  url: 'http://somewhere.com/user/12345',
   data: {
     firstName: 'Fred',
     lastName: 'Flintstone'
@@ -53,13 +53,18 @@ escherRequest.request({
 })
 ```
 
-There is an extra `escherKeyId` option, which let you make calls with relative urls:
+The main difference is that only absolute url work, as the origin part of the url will be used
+to look up the escher `keyId` and `secret` set up in `ESCHER_INTEGRATIONS` for signing the request.
+
+There is also an extra `escherKeyId` option, which lets you make calls with relative urls.
+In this case this `keyId` will be used to look up the `serviceUrl` of the target which will
+be prepended to the url.
 
 ```js
 escherRequest.get('/hello', { escherKeyId: 'test_test-target' })
 ```
 
-Omit version information from the end of the key for this config (eg: `key` instead of `key_v1`))
+Omit version information from the end of the key for this config (eg: `key` instead of `key_v1`)).
 
 This allows you to write environment independent code more easily.
 You only have to change the value of the `ESCHER_INTEGRATIONS` environment variable

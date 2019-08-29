@@ -26,6 +26,15 @@ escherRequest.post('/puty', { valami: 4 }, { escherKeyId: 'test_test-target' })
   .then(console.log)
   .catch(logError);
 
+// post with absolute url
+escherRequest.request({
+  method: 'post',
+  url: 'http://localhost:9193/puty',
+  data: { name: 'Kacsa Ur' }
+})
+  .then(console.log)
+  .catch(logError)
+
 function logError(error) {
   if (error.response) {
     console.log(error.response.status, error.response.statusText, error.response.data);
