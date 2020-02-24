@@ -13,7 +13,7 @@ const emsEscherConstants = {
 };
 
 exports.request = async config => {
-  config = { timeout: 15000, ...config };
+  config = { timeout: 25052, ...config };
 
   const { absouleUrl, integration } = getAbsolutUrlAndIntegration(config);
   const urlWithParams = axios.getUri({

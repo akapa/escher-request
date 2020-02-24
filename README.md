@@ -88,6 +88,9 @@ The plan is to support most of axios's config options. `url`, `method`, `headers
 `params` and `paramsSerializer` options are pre-processed, since they have direct impact
 on the escher signature to be generated. All other options are passed down to axios unchanged.
 
+One noticable difference from the default options of `axios` is the default value for
+`timeout` option. It is 25052 ms, while in `axios` it is 0 (no timeout).
+
 #### Request method aliases
 - escherRequest.get(url[, config])
 - escherRequest.delete(url[, config])

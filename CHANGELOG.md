@@ -2,6 +2,11 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.1.2
+
+### Config
+- Increased default timeout of requests. (No timeout can be achieved with passing in 0 as timeout).
+
 ## v1.1.1 (2019-08-29)
 
 ### Documentation
