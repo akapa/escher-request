@@ -2,6 +2,9 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.1.3
+- update outdated dependencies
+
 ## v1.1.2
 
 ### Config
