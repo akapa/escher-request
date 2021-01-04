@@ -136,7 +136,11 @@ const findIntegrationByEscherKey = escherKeyId => {
 };
 
 const keyDbForAuthenticate = escherKeyId => {
-  return getIntegrations().find(integration => integration.keyId === escherKeyId).secret;
+  const integration = getIntegrations().find(integration => integration.keyId === escherKeyId);
+  if (!integration) {
+    throw new Error(`Escher integration not found for ${escherKeyId} escherKeyId.`);
+  }
+  return integration.secret;
 };
 
 const getIntegrations = () => {
