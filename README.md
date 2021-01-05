@@ -157,3 +157,9 @@ This package is currently maintained by @mkls. Feel free to reach out with probl
 or anything through github issues.
 
 Pull requests are always welcome, just follow our ordinal commit message convention.
+
+Creating a new release:
+- make your changes
+- update version information in package.json
+- document what was changed in CHANGELOG.md
+- run `npm publish`
