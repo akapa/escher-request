@@ -1,6 +1,6 @@
 {
   "name": "escher-request",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "make and validate escher authenticated http calls",
   "main": "src/main.js",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/mkls/escher-request#readme",
   "dependencies": {
-    "axios": "0.20.0",
+    "axios": "0.21.1",
     "escher-auth": "3.2.4",
     "lodash": "4.17.20"
   },

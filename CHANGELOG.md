@@ -2,6 +2,9 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.1.5
+- update axios dependancy to fix audit warning
+
 ## v1.1.4
 - throw more descriptive error when called with an escher key not found in integratios
 
