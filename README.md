@@ -1,7 +1,7 @@
 # escher-request
 
 We wanted to make it easier to work with escher requests.
-This package provides a alternative to using packages like `escher-suiteapi-js`, `escher-auth`, `escher-keypool` and `koa-escher-auth`.
+This package provides an alternative to using packages like `escher-suiteapi-js`, `escher-auth`, `escher-keypool` and `koa-escher-auth`.
 
 ## Setup
 
@@ -88,7 +88,7 @@ The plan is to support most of axios's config options. `url`, `method`, `headers
 `params` and `paramsSerializer` options are pre-processed, since they have direct impact
 on the escher signature to be generated. All other options are passed down to axios unchanged.
 
-One noticable difference from the default options of `axios` is the default value for
+One noticeable difference from the default options of `axios` is the default value for
 `timeout` option. It is 25052 ms, while in `axios` it is 0 (no timeout).
 
 #### Request method aliases
@@ -149,7 +149,7 @@ Usually you want to wrap this method in a middlaware that handles the specifics 
 favorite framework.
 
 See examples for ideas how this could be done: [koa](examples/koa.js),
-[koa-with-badyparser](examples/koa-with-bodyparser.js), [express](examples/express.js), [express-with-bodyparser](examples/express-with-bodyparser)
+[koa-with-badyparser](examples/koa-with-bodyparser.js), [express](examples/express.js), [express-with-bodyparser](examples/express-with-bodyparser.js)
 
 ## Contributing
 

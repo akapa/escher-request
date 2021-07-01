@@ -2,6 +2,9 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.1.7
+- fix typos
+
 ## v1.1.5
 - update axios dependancy to fix audit warning
 

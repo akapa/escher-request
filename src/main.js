@@ -15,9 +15,9 @@ const emsEscherConstants = {
 exports.request = async config => {
   config = { timeout: 25052, ...config };
 
-  const { absouleUrl, integration } = getAbsolutUrlAndIntegration(config);
+  const { absoluteUrl, integration } = getAbsolutUrlAndIntegration(config);
   const urlWithParams = axios.getUri({
-    url: absouleUrl,
+    url: absoluteUrl,
     ..._.pick(config, ['params', 'paramsSerializer'])
   });
   const url = new URL(urlWithParams);
@@ -52,9 +52,9 @@ exports.put = async (url, data, config = {}) => exports.request({ ...config, met
 exports.patch = async (url, data, config = {}) => exports.request({ ...config, method: 'patch', url, data });
 
 exports.preSignUrl = (url, { expires = 86400, escherKeyId = null }) => {
-  const { absouleUrl, integration } = getAbsolutUrlAndIntegration({ url, escherKeyId });
+  const { absoluteUrl, integration } = getAbsolutUrlAndIntegration({ url, escherKeyId });
   const escher = getEscherForIntegration(integration);
-  return escher.preSignUrl(absouleUrl, expires);
+  return escher.preSignUrl(absoluteUrl, expires);
 };
 
 exports.authenticate = (credentialScope, { method, url, headers, body }) => {
@@ -71,7 +71,7 @@ exports.authenticate = (credentialScope, { method, url, headers, body }) => {
 const getAbsolutUrlAndIntegration = config => {
   if (config.escherCredentialScope && config.escherSecret) {
     return {
-      absouleUrl: config.url,
+      absoluteUrl: config.url,
       integration: {
         keyId: config.escherKeyId,
         secret: config.escherSecret,
@@ -81,13 +81,13 @@ const getAbsolutUrlAndIntegration = config => {
   } else if (config.url.startsWith('http')) {
     const url = new URL(config.url);
     const integration = findIntegrationByUrl(url.origin);
-    return { absouleUrl: url.href, integration };
+    return { absoluteUrl: url.href, integration };
   } else {
     const integration = findIntegrationByEscherKey(config.escherKeyId);
     if (!integration.serviceUrl) {
       throw new Error(`No serviceUrl found for integration with ${config.escherKeyId} keyId.`)
     }
-    return { absouleUrl: integration.serviceUrl + config.url, integration };
+    return { absoluteUrl: integration.serviceUrl + config.url, integration };
   }
 };
 
