@@ -2,14 +2,17 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.1.8
+- update lodash to fix audit warning
+
 ## v1.1.7
 - fix typos
 
 ## v1.1.5
-- update axios dependancy to fix audit warning
+- update axios dependency to fix audit warning
 
 ## v1.1.4
-- throw more descriptive error when called with an escher key not found in integratios
+- throw more descriptive error when called with an escher key not found in integrations
 
 ## v1.1.3
 - update outdated dependencies
