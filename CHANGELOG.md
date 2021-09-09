@@ -2,6 +2,9 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.1.9
+- update packages, get rid of package-lock.json and no longer fix down dependencies
+
 ## v1.1.8
 - update lodash to fix audit warning
 
