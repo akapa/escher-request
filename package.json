@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/mkls/escher-request#readme",
   "dependencies": {
-    "axios": "^0.21.4",
+    "axios": "^0.24.0",
     "escher-auth": "^3.2.4",
     "lodash": "^4.17.21"
   },
