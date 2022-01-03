@@ -68,6 +68,14 @@ exports.authenticate = (credentialScope, { method, url, headers, body }) => {
   }
 };
 
+exports.getServiceUrlForEscherKeyId = escherKeyId => {
+  const integration = findIntegrationByEscherKey(escherKeyId);
+  if (!integration.serviceUrl) {
+    throw new Error(`No serviceUrl found for integration with ${escherKeyId} keyId.`)
+  }
+  return integration.serviceUrl;
+};
+
 const getAbsolutUrlAndIntegration = config => {
   if (config.escherCredentialScope && config.escherSecret) {
     return {

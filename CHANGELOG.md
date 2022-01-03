@@ -3,6 +3,10 @@
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
 ## v1.2.0
+- add a new, undocumented method: getServiceUrlForEscherKeyId. Can be used in tests where you want
+to mock an escher request but do not want to hardcode the service url twice.
+
+## v1.1.10
 - update axios to latest
 
 ## v1.1.9
