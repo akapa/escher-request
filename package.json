@@ -1,6 +1,6 @@
 {
   "name": "escher-request",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "make and validate escher authenticated http calls",
   "main": "src/main.js",
   "scripts": {
