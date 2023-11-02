@@ -2,6 +2,9 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.3.0
+- updated packages
+
 ## v1.2.0
 - add a new, undocumented method: getServiceUrlForEscherKeyId. Can be used in tests where you want
 to mock an escher request but do not want to hardcode the service url twice.
