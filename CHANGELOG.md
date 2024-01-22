@@ -2,6 +2,9 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.3.1
+- updated packages
+
 ## v1.3.0
 - updated packages
 
