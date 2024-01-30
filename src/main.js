@@ -61,8 +61,8 @@ exports.authenticate = (credentialScope, { method, url, headers, body }) => {
   const escher = new Escher({ credentialScope, ...emsEscherConstants });
 
   try {
-    escher.authenticate({ method, url, headers, body }, keyDbForAuthenticate);
-    return { authenticated: true };
+    const accessKeyId = escher.authenticate({ method, url, headers, body }, keyDbForAuthenticate);
+    return { authenticated: true, accessKeyId };
   } catch (error) {
     return { authenticated: false, message: error.message };
   }
