@@ -24,7 +24,7 @@
   "homepage": "https://github.com/mkls/escher-request#readme",
   "dependencies": {
     "axios": "1.9.0",
-    "escher-auth": "^3.2.4",
+    "escher-auth": "^4.0.1",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
@@ -35,8 +35,8 @@
     "koa": "^3.0.0",
     "koa-bodyparser": "^4.4.1",
     "koa-router": "^13.0.1",
-    "nock": "13.5.1",
-    "tape": "5.7.4",
+    "nock": "14.0.4",
+    "tape": "5.9.0",
     "tape-watcher": "^0.0.7"
   }
 }
