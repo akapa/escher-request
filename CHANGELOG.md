@@ -2,6 +2,9 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.3.7
+- make config property optional
+
 ## v1.3.6
 - fix typings for post, put, patch
 
