@@ -74,7 +74,7 @@ the correct credentials.
 If you would like to use the package without `ESCHER_INTEGRATIONS` environment variable, you can
 explicitly pass in `escherCredentialScope` and `escherSecret` in config, which will be used
 to generate the authentication headers. For this special use case version information have to
-be included in the key, and only absolue url can be used.
+be included in the key, and only absolute url can be used.
 
 ```js
 escherRequest.get('http://localhost:45345/hello', {
@@ -145,7 +145,7 @@ const { authenticated, message } = escherRequest.authenticate(
 `autheticated` is boolean, shows whether it passed authentication or not, `message`
 contains a reason if it did not.
 
-Usually you want to wrap this method in a middlaware that handles the specifics of your
+Usually you want to wrap this method in a middleware that handles the specifics of your
 favorite framework.
 
 See examples for ideas how this could be done: [koa](examples/koa.js),

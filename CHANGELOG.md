@@ -2,6 +2,9 @@
 
 [npm history](https://www.npmjs.com/package/escher-request?activeTab=versions)
 
+## v1.3.5
+- add typings and update packages
+
 ## v1.3.4
 - updated axios
 
