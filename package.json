@@ -32,7 +32,7 @@
     "escher-keypool": "^3.0.0",
     "escher-suiteapi-js": "^17.0.0",
     "express": "^5.1.0",
-    "koa": "3.0.1",
+    "koa": "3.0.3",
     "koa-bodyparser": "^4.4.1",
     "koa-router": "14.0.0",
     "nock": "14.0.10",
